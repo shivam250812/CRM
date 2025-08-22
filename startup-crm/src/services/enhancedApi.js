@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const API_BASE_URL = import.meta.env.PROD 
-  ? 'https://your-backend-domain.railway.app/api'
+  ? 'https://enterprise-crm-backend.onrender.com/api'
   : 'http://localhost:3001/api';
 
 const api = axios.create({
