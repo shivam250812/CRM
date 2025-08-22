@@ -2,8 +2,9 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 
 const AuthContext = createContext();
 
+// API Base URL configuration
 const API_BASE_URL = import.meta.env.PROD 
-  ? (import.meta.env.VITE_API_URL || 'https://enterprise-crm-backend.onrender.com')
+  ? (import.meta.env.VITE_API_URL || 'https://enterprise-crm-backend.onrender.com/api')
   : 'http://localhost:3001/api';
 
 export const useAuth = () => {
@@ -28,7 +29,7 @@ export const AuthProvider = ({ children }) => {
       if (storedToken && storedUser) {
         try {
           // Verify token is still valid
-          const response = await fetch('${API_BASE_URL}/auth/profile', {
+          const response = await fetch(`${API_BASE_URL}/auth/profile`, {
             headers: {
               'Authorization': `Bearer ${storedToken}`
             }
@@ -56,7 +57,9 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (username, password) => {
     try {
-      const response = await fetch('${API_BASE_URL}/auth/login', {
+      console.log('Attempting login to:', `${API_BASE_URL}/auth/login`);
+      
+      const response = await fetch(`${API_BASE_URL}/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -64,7 +67,19 @@ export const AuthProvider = ({ children }) => {
         body: JSON.stringify({ username, password }),
       });
 
+      console.log('Response status:', response.status);
+      console.log('Response headers:', response.headers);
+
+      // Check if response is actually JSON
+      const contentType = response.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        const text = await response.text();
+        console.error('Non-JSON response:', text);
+        return { success: false, error: 'Server returned non-JSON response' };
+      }
+
       const data = await response.json();
+      console.log('Response data:', data);
 
       if (response.ok) {
         setToken(data.token);
@@ -73,7 +88,7 @@ export const AuthProvider = ({ children }) => {
         localStorage.setItem('auth_user', JSON.stringify(data.user));
         return { success: true };
       } else {
-        return { success: false, error: data.error };
+        return { success: false, error: data.error || data.message };
       }
     } catch (error) {
       console.error('Login error:', error);
@@ -84,7 +99,7 @@ export const AuthProvider = ({ children }) => {
   const logout = async () => {
     try {
       if (token) {
-        await fetch('${API_BASE_URL}/auth/logout', {
+        await fetch(`${API_BASE_URL}/auth/logout`, {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${token}`,
