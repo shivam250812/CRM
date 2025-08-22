@@ -61,9 +61,16 @@ const initializeApp = async () => {
 initializeApp();
 
 // Routes
+console.log('Registering routes...');
+console.log('authRoutes type:', typeof authRoutes);
+console.log('routes type:', typeof routes);
+console.log('enhancedRoutes type:', typeof enhancedRoutes);
+
 app.use('/api/auth', authRoutes);
 app.use('/api', routes);
 app.use('/api', enhancedRoutes);
+
+console.log('Routes registered successfully');
 
 // Health check endpoint
 app.get('/health', (req, res) => {
