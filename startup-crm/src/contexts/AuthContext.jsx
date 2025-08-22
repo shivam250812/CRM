@@ -3,7 +3,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 const AuthContext = createContext();
 
 const API_BASE_URL = import.meta.env.PROD 
-  ? (import.meta.env.VITE_API_URL || 'https://enterprise-crm-backend.onrender.com/api')
+  ? (import.meta.env.VITE_API_URL || 'https://enterprise-crm-backend.onrender.com')
   : 'http://localhost:3001/api';
 
 export const useAuth = () => {
@@ -28,7 +28,7 @@ export const AuthProvider = ({ children }) => {
       if (storedToken && storedUser) {
         try {
           // Verify token is still valid
-          const response = await fetch('http://localhost:3001/api/auth/profile', {
+          const response = await fetch('${API_BASE_URL}/auth/profile', {
             headers: {
               'Authorization': `Bearer ${storedToken}`
             }
@@ -56,7 +56,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (username, password) => {
     try {
-      const response = await fetch('http://localhost:3001/api/auth/login', {
+      const response = await fetch('${API_BASE_URL}/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -84,7 +84,7 @@ export const AuthProvider = ({ children }) => {
   const logout = async () => {
     try {
       if (token) {
-        await fetch('http://localhost:3001/api/auth/logout', {
+        await fetch('${API_BASE_URL}/auth/logout', {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${token}`,
