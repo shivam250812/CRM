@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: crm-backend
+    env: node
+    plan: free
+    buildCommand: cd backend && npm install
+    startCommand: cd backend && npm start
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3001
+      - key: JWT_SECRET
+        generateValue: true
+      - key: DATABASE_URL
+        value: ./crm.db
