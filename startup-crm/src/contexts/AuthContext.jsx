@@ -2,6 +2,10 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 
 const AuthContext = createContext();
 
+const API_BASE_URL = import.meta.env.PROD 
+  ? (import.meta.env.VITE_API_URL || 'https://enterprise-crm-backend.onrender.com/api')
+  : 'http://localhost:3001/api';
+
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
