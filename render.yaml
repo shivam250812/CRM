@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: crm-backend
+    name: enterprise-crm-backend
     env: node
     plan: free
     buildCommand: cd backend && npm install
@@ -9,9 +9,18 @@ services:
     envVars:
       - key: NODE_ENV
         value: production
-      - key: PORT
-        value: 3001
       - key: JWT_SECRET
         generateValue: true
-      - key: DATABASE_URL
-        value: ./crm.db
+      - key: FRONTEND_URL
+        value: https://your-frontend-url.onrender.com
+  
+  - type: web
+    name: enterprise-crm-frontend
+    env: static
+    plan: free
+    buildCommand: cd startup-crm && npm install && npm run build
+    staticPublishPath: startup-crm/dist
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
